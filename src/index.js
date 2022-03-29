@@ -1,10 +1,19 @@
-import pg from 'pg';
+require('dotenv').config();
+var pg = require('pg');
 
-console.log(JSON.stringify(pg.defaults, null, 2));
+var conString = process.env.ELEPHANT_SQL_URL;
+var client = new pg.Client(conString);
 
-// const client = new Client({
-//   host: 'my.database-server.com',
-//   port: 5334,
-//   user: 'database-user',
-//   password: 'secretpassword!!'
-// });
+client.connect(function (err) {
+  if (err) {
+    return console.error('could not connect to postgres', err);
+  }
+
+  client.query('SELECT * FROM recipe WHERE id = 1', function (err, result) {
+    if (err) {
+      return console.error('error running query', err);
+    }
+    console.log(JSON.stringify(result.rows[0], null, 2));
+    client.end();
+  });
+});
