@@ -1,19 +1,41 @@
-require('dotenv').config();
-var pg = require('pg');
+require("dotenv").config();
+var pg = require("pg");
+
+const express = require("express");
+const app = express();
+const port = 8000;
+
+let router = express.Router();
 
 var conString = process.env.ELEPHANT_SQL_URL;
 var client = new pg.Client(conString);
-
 client.connect(function (err) {
   if (err) {
-    return console.error('could not connect to postgres', err);
+    return console.error("could not connect to postgres", err);
   }
 
-  client.query('SELECT * FROM recipe WHERE id = 1', function (err, result) {
+  client.query("SELECT * FROM recipe WHERE id = 1", function (err, result) {
     if (err) {
-      return console.error('error running query', err);
+      return console.error("error running query", err);
     }
-    console.log(JSON.stringify(result.rows[0], null, 2));
+    // console.log(JSON.stringify(result.rows[0], null, 2));
     client.end();
   });
+});
+
+app
+  .route("/")
+  .get((req, res) => {
+    res.send("root");
+    console.log("----> Connected to root '/' route");
+  })
+  .post((req, res) => {
+    res.send("Add a");
+  })
+  .put((req, res) => {
+    res.send("Update");
+  });
+
+app.listen(port, () => {
+  console.log(`Express Server on port ${port}`);
 });
