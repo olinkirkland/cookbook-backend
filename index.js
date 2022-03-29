@@ -16,24 +16,18 @@ client.connect(function (err) {
   }
 });
 
-function getRecipe(slug) {
-  client.connect(function (err) {
+function getRecipe(slug, callback) {
+  const query = `SELECT * FROM recipe WHERE id = ${1}`;
+  console.log(query);
+  client.query(query, function (err, result) {
     if (err) {
-      return console.error("could not connect to postgres", err);
+      return console.error("error running query", err);
     }
+
+    const r = JSON.stringify(result.rows[0], null, 2);
+    client.end();
+    callback(r);
   });
-
-  client.query(
-    `SELECT * FROM recipe WHERE slug = ${rotweinkuchen}`,
-    function (err, result) {
-      if (err) {
-        return console.error("error running query", err);
-      }
-
-      // console.log(JSON.stringify(result.rows[0], null, 2));
-      client.end();
-    }
-  );
 }
 
 app
@@ -52,12 +46,3 @@ app
 app.listen(port, () => {
   console.log(`Express Server on port ${port}`);
 });
-
-/* app.get("/recipe/:id", (req, res) => {
-  const recipeId = req.params.id;
-  res.send("Recipe " + getRecipe(recipeId));
-});
-
-app.listen(port, () => {
-  console.log(`Listening on port ${port}`);
-}); */
