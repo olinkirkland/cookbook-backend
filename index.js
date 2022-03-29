@@ -8,6 +8,11 @@ var pg = require("pg");
 
 var conString = process.env.ELEPHANT_SQL_URL;
 var client = new pg.Client(conString);
+client.connect(function (err) {
+  if (err) {
+    return console.error('could not connect to postgres', err);
+  }
+});
 
 function getRecipe(slug) {
   client.connect(function (err) {
@@ -17,7 +22,7 @@ function getRecipe(slug) {
   });
 
   client.query(
-    `SELECT * FROM recipe WHERE slug = ${slug}`,
+    `SELECT * FROM recipe WHERE slug = ${rotweinkuchen}`,
     function (err, result) {
       if (err) {
         return console.error("error running query", err);
