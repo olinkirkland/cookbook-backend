@@ -1,12 +1,12 @@
 export default function (app) {
   app
-    .route('/recipes')
+    .route('/')
     .get((req, res) => {
-      res.send('root');
+      res.send('recipes');
       console.log("----> Connected to recipes '/recipes'");
     })
     .post((req, res) => {
-      res.send('Add a');
+      res.send('Add');
     })
     .put((req, res) => {
       res.send('Update');
