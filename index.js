@@ -14,25 +14,27 @@ app.route('/').get((req, res) => {
 
 // Recipes
 app.route('/recipes').get((req, res) => {
-  // res.send(getAllRecipes());
+  getAllRecipes((recipes) => {
+    res.send(`<pre>${JSON.stringify(recipes, null, 2)}</pre>`);
+  });
 });
-app.route('/recipe/:slug').get((req, res) => {
+app.route('/recipes/:slug').get((req, res) => {
   const slug = req.params.slug;
   getRecipe(slug, function (recipe) {
-    res.send(recipe);
+    res.send(`<pre>${JSON.stringify(recipe, null, 2)}</pre>`);
   });
 });
 
 // Users
 app.route('/users').get((req, res) => {
   getAllUsers((users) => {
-    res.send(`<pre>${users}</pre>`);
+    res.send(`<pre>${JSON.stringify(users, null, 2)}</pre>`);
   });
 });
-app.route('/user/:id').get((req, res) => {
+app.route('/users/:id').get((req, res) => {
   const id = req.params.id;
   getUser(id, function (user) {
-    res.send(`<pre>${user}</pre>`);
+    res.send(`<pre>${JSON.stringify(user, null, 2)}</pre>`);
   });
 });
 
@@ -57,8 +59,7 @@ function getAllUsers(callback) {
   client.query(`SELECT * FROM author`, function (err, result) {
     if (err) return console.error('Error running query', err);
 
-    const r = JSON.stringify(result.rows, null, 2);
-    callback(r);
+    callback(result.rows);
   });
 }
 
@@ -70,14 +71,17 @@ function getUser(id, callback) {
       return console.error('Error running query', err);
     }
 
-    const r = JSON.stringify(result.rows, null, 2);
-    callback(r);
+    callback(result.rows[0]);
   });
 }
 
 // Returns all recipe slugs
 function getAllRecipes(callback) {
-  callback([]);
+  client.query(`SELECT * FROM recipes`, function (err, result) {
+    if (err) return console.error('Error running query', err);
+
+    callback(result.rows);
+  });
 }
 
 // Get an individual recipe by its slug
@@ -88,7 +92,6 @@ function getRecipe(slug, callback) {
   client.query(query, function (err, result) {
     if (err) return console.error('Error running query', err);
 
-    const r = JSON.stringify(result.rows[0], null, 2);
-    callback(r);
+    callback(result.rows[0]);
   });
 }
